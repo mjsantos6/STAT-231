@@ -1,0 +1,122 @@
+---
+  title: "STAT 231: Problem Set 2A"
+author: "Michael Santos"
+date: "due by 5 PM on Monday, September 7"
+output: pdf_document
+---
+#In order to most effectively digest the textbook chapter readings -- and the  new R commands each presents -- series A homework assignments are designed to encourage you to read the textbook chapters actively and in line with the textbook's Prop Tip of page 33:
+# 
+# "\textbf{Pro Tip}: If you want to learn how to use a particular command, we highly recommend running the example code on your own" 
+# 
+# A more thorough reading and light practice of the textbook chapter prior to class allows us to dive quicker and deeper into the topics and commands during class.  Furthermore, learning a programming lanugage is like learning any other language -- practice, practice, practice is the key to fluency.  By having two assignments each week, I hope to encourage practice throughout the week.  A little coding each day will take you a long way!
+# 
+# *Series A assignments are intended to be completed individually.*  While most of our work in this class will be collaborative, it is important each individual completes the active readings.  The problems should be straightforward based on the textbook readings, but if you have any questions, feel free to ask me!
+# 
+# Steps to proceed:
+# 
+# \begin{enumerate}
+# \item In RStudio, go to File > Open Project, navigate to the folder with the course-content repo, select the course-content project (course-content.Rproj), and click "Open" 
+# \item Pull the course-content repo (e.g. using the blue-ish down arrow in the Git tab in upper right window)
+# \item Copy ps2A.Rmd from the course repo to your repo (see page 6 of the GitHub Classroom Guide for Stat231 if needed)
+# \item Close the course-content repo project in RStudio
+# \item Open YOUR repo project in RStudio
+# \item In the ps2A.Rmd file in YOUR repo, replace "YOUR NAME HERE" with your name
+# \item Add in your responses, committing and pushing to YOUR repo in appropriate places along the way
+# \item Run "Knit PDF" 
+# \item Upload the pdf to Gradescope.  Don't forget to select which of your pages are associated with each problem.  \textit{You will not get credit for work on unassigned pages (e.g., if you only selected the first page but your solution spans two pages, you would lose points for any part on the second page that the grader can't see).} 
+# \end{enumerate}
+#
+
+```{r, setup, include=FALSE}
+library(mdsr)   
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+\newpage
+# 1. NYC Flights
+
+### a.
+In Section 4.3.1, the `flights` and `carrier` tables within the `nycflights13` package are joined together.  Recreate the `flightsJoined` dataset from page 80.  Hint: make sure you've loaded the `nycflights13` package before referring to the data tables (see code on page 79).
+Consider the data graphic for Career Paths at Williams College at:https:/ web.williams.edu / Mathematics / devadoss / careerpath.html.  Focus on the graphic under the "Major-Career" tab.
+                                                                                                                                                                                 
+ a. What story does the data graphic tell ?  What is the main message that you take away from it ?
+                                                                                                                                                                                   
+> ANSWER:This graphic tells the story that ones college major is not the entire story, and that frequently ones career path is undecided by their major choice.   
+ > ANSWER:This data graphic appears to be a form of the select function as mentioned in this chapter. It, visually, resembles it quite significantly as entries are grouped together by their common outcomes.
+                                                                                                                                                                                 
+c. Critique and / or praise the visualization choices made by the designer.  Do they work ? Are they misleading ?  Thought -provoking ?  Brilliant ?  Are there things that you would have done differently ?  Justify your response.
+> ANSWER:I think the visualization is a bit complicated as there is a lot more in play than simply ones major. It comes down to their interest, values, connections, origin, and many more aspects of their personal life.
+\newpage
+
+# Spot the Error (non-textbook problem)
+Explain why the following command does not color the data points blue, then write down the command that will turn the points blue.
+> ANSWER:
+  ```{r}
+library(ggplot2)
+ggplot(data = mpg, color = "Blue", fill = "Blue") +
+  geom_point(mapping = aes(x = displ, y = hwy, color = "#00AFBB"))
+```
+\newpage
+
+# MDSR Exercise 3.6 (modified)
+Use the `MLB_teams` data in the `mdsr` package to create an informative data graphic that illustrates the relationship between winning percentage and payroll in context. What story does your graph tell ?
+                                                                                                                                                                                   
+> ANSWER:  ```{r}
+library(ggplot2)
+ggplot(data = MLB_teams) +
+geom_point(mapping = aes(x = WPct, y = payroll, color = "#00AFBB"))
++ lm(data = MLB_teams, WPct ~ payroll, color = "Black")
+```
+                                                                                                                                                                    
+\newpage
+ # MDSR Exercise 3.10 (modified)
+Using data from the `nasaweather` package, use the `geom_path()` function to plot the path of each tropical storm in the `storms` data table (use variables `lat` (y - colors by adding `scale_color_discrete(guide="none")`.
+Note:be sure you load the `nasaweather` package and use the `storms` dataset from that package !
+```{r}
+Where is this data located? I could not find it.
+```
+                                                                                                                                                                                 
+\newpage
+# Calendar assignment check-in
+                                                                                                                                                                                 
+ For the calendar assignment:-Identify what questions you are planning to focus on
+- Describe two visualizations (type of plot, coordinates, visual cues, etc.) you imagine creating that help address your questions of interest
+I plan on doing either a histogram of sorts or perhaps something similar to a pie chart. I think here, the actual numbers matter less than seeing the proportion.
+- Describe one table (what will the rows be ?  what will the columns be ?
+A table will likely have dates on top, activities on the side and hours spent doing each thing in the cells.
+                                                                                                                                                                          
+                                                                                                                                                                                 
+Note that you are not wed to the ideas you record here.  The visualizations and table can change before your final submission.  But, I want to make sure your plan aligns with your questions and that you're on the right track.
+Following the code presented in Section 5.2.4, create a dataset called `BabyNarrow` that summarizes the total number of people with each name (born between 2000 and 2017), grouped by sex. (Hint: follow the second code chunk on page 102, but don't filter on any particular names.)  Look at the dataset.  Why have we called this dataset "narrow"?
+
+> ANSWER:
+```{r}
+BabyNarrow %>%
+      group_by(name, sex) %>%
+      summarize(total=sum(n)) %>%
+      spread(key = sex, value = total, fill=0)
+```
+
+This dataset has fewer filters than its predecessor and thus, will be narrower.
+
+### c.
+Now, following the code chunk presented on page 103, put the data into a wide format (call the new dataset `BabyWide`), and only keep observations where both `M` and `F` are greater than 10,000.  Compute the `ratio` (as `pmin(M/F, F/M`)) and identify the top three names with the largest ratio.  (Note: these names could be different from the ones found on page 103 since we limited the dataset to years 2000-2017 and names with greater than 10,000 individuals.)
+
+> ANSWER:
+```{r}
+  BabyWide %>%
+    filter (M > 50000, F > 50000) %>%
+    mutate(ratio = pmin(M/F, F/M)) %>%
+    arrange(desc(ratio)) %>%
+    
+```
+
+### d.
+Lastly, use the `gather()` function (or the `pivot_longer()` function) to put the dataset back into narrow form.  Call this dataset `BabyNarrow2`.  Hint: see Section 5.2.3.  Why are the number of observations in `BabyNarrow2` different from that in `BabyNarrow`?
+
+> ANSWER: 
+```{r}
+  BabyNarrow2 %>% gather(key=when, value=name, before, after)
+```
