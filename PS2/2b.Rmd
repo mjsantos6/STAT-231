@@ -1,0 +1,125 @@
+---
+title: 'STAT 231: Problem Set 2B'
+author: "Mike Santos"
+date: "due by 2 PM on Friday, September 11"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+Series B homework assignments are designed to help you futher ingest and practice the material covered in class over the past week(s).  You are encouraged to work with other students, but all code must be written by you and you must indicate below who you discussed the assignment with (if anyone).  
+
+Steps to proceed:
+
+```{r, setup, include=FALSE}
+library(mdsr)   
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+
+\newpage 
+
+# If you discussed this assignment with any of your peers, please list who here:
+
+> ANSWER: N/A
+
+\newpage
+# MDSR Exercise 4.14 (modified)
+
+Use the `Pitching` data frame from the `Lahman` package to identify every pitcher in baseball history who has accumulated at least 300 wins (`W`) and at least 3,000 strikeouts (`SO`).  
+
+a. How many pitchers meet this criteria?  
+
+> ANSWER: 
+
+```{r}
+print("I had to comment out/leave out some code as it couldn't knit in time")
+library(Lahman)
+Pitching2 = group_by(Pitching, playerID)
+summary(Pitching2)
+library(purrr)
+
+#Pitching4 = Pitching %>% split(Pitching$playerID) %>% map(summary)
+
+Ace = Pitching2 %>% filter('W' >= 300 & 'SO' >= 3000)
+Ace
+```
+
+b. Which of these pitchers had the most accumulated strikeouts?  How many strikeouts had he accumulated?  What is the most strikeouts he had in one season?
+
+> ANSWER: 
+
+```{r}
+colMax <- function(data) sapply(data, max, na.rm = TRUE)
+max(Pitching$W, na.rm = TRUE)
+```
+
+
+\newpage 
+# MDSR Exercise 4.17 (modified)
+
+a. The Violations data set in the `mdsr` package contains information regarding the outcome of health inspections in New York City.  Use these data to calculate the median violation score by zipcode and dba for zipcodes in Manhattan.  What pattern (if any) do you see between the number of inspections and the median score?  Generate a visualization to support your response.  
+
+> ANSWER:  
+
+```{r}
+library(mdsr)
+Violations
+zip = group_by(Violations, zipcode)
+dba = group_by(Violations, dba)
+summary(Violations)
+summary(Violations$score)
+#zip2 = Violations %>% split(Violations$zipcode)
+#dba2 = Violations %>% split(Violations$dba)
+
+library(ggplot2)
+plot = ggplot(data = Violations, aes(x = score)) +
+geom_bar(stat = "identity", aes(y = inspection_date)
+, fill = "#b2d7e9", color = "white")
+plot
+```
+
+b.  In your visualization in part (a), there should be at least a few points that stand out as outliers.  For *one of the outliers*, add text to the outlier identifying what business it is and an arrow pointing from the text to the observation.  First, you may want to `filter` to identify the name of the business (so you know what text to add to the plot).  
+
+(Can't remember how to create a curved arrow in `ggplot`?  Can't remember how to add text to the plot in `ggplot`?  Check out the answers to questions #5 and #8, respectively, in the Moodle R Q&A forum!)
+
+```{r}
+print("Data cannot load quickly enough to plot")
+#Here I would filter by whatever number is the outlier, then the business is identified
+#I couldn't find the questions in the Moodle Q&A
+#plot +
+ # annotate("text", x=0, y=0, label= "Business") +
+ # geom_curve(...)
+```
+
+
+\newpage
+# MDSR Exercise 5.7
+
+Generate the code to convert the data frame shown with this problem in the textbook (on page 130, and shown below) to wide format (i.e., the result table).  Hint: use `gather()` in conjuction with `spread()`; OR `pivot_longer()` in conjuction with `pivot_wider()`.
+
+```{r}
+#FakeDataLong <- data.frame(grp = c("A","A","B", "B")
+#                           , sex = c("F", "M", "F", "M")
+ #                          , meanL = c(0.22, 0.47, 0.33, 0.55)
+ #                          , sdL = c(0.11, 0.33, 0.11, 0.31)
+  #                         , meanR = c(0.34, 0.57, 0.40, 0.65)
+  #                         , sdR = c(0.08, 0.33, 0.07, 0.27))
+#install.packages("data.table")           # Install and load data.table
+#library("data.table")
+
+#setDT(FakeDataLong)
+#FakeDataLong
+```
+
+\newpage
+# PUG Post
+
+What topics or questions are you interested in exploring related to your PUG theme?  Dream big here.  Don't worry about whether there is data out there that's available and accessible that you could use to address your questions/topics.  Just brainstorm some ideas that get you excited.  In your PUG team discussion forum on GitHub, start a thread called "Brainstorming" (or, if another team member has already started the thread, reply to their post) with your ideas.
+
+> ANSWER: Do not write anything here.  Write down your ideas in your PUG team's discussion thread titled "Brainstorming" on GitHub.

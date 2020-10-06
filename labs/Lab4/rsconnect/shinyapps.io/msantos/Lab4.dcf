@@ -1,0 +1,12 @@
+name: Lab4
+title: Lab4
+username:
+account: msantos
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2841946
+bundleId: 3644992
+url: https://msantos.shinyapps.io/Lab4/
+when: 1600460503.84847
+asMultiple: FALSE
+asStatic: FALSE
