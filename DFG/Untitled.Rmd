@@ -1,0 +1,19 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, install = TRUE}
+#331, 
+library(tidycensus)
+library(tidyverse)
+census_api_key("0d3d47d23bb15267a8b51b4e2197c1ea3d7a72e4")
+
+state <- get_acs(geography = "metropolitan statistical area/micropolitan statistical area",
+              variables = c(population = "B01003_001"),
+              year = 2018)
+
+cities <- state %>%  arrange(desc(estimate))%>%  head(30)
+```
+
+

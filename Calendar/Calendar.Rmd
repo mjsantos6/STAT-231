@@ -1,0 +1,156 @@
+---
+title: "Does a change in scenery cause a change in lifestyle?"
+subtitle: "Stat231: Google Calendar Report"
+author: "Mike Santos"
+date: "Due Friday, September 25 by 2:00 PM PDT"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How do I spend my time?
+
+```{r}
+#Setting up table and altering column titles
+library(dplyr)
+library(readr)
+Log <- read_csv("Log.csv")
+log = Log %>% filter (Log$START.TIME.LOCAL > "2020-08-15")
+log$general.location = "Road Trip"
+log$time.zone = "CDT"
+Eastern = "EDT"
+Central = "CDT"
+Mountain = "MDT"
+Pacific = "PDT"
+
+#Adding time zone and location to table
+logEast = log %>% filter (grepl(Eastern, log$START.TIME.LOCAL))
+logEast$time.zone = "EDT"
+logCentral =  log %>% filter (grepl(Central, log$START.TIME.LOCAL))
+logCentral$time.zone = "CDT"
+logRT = rbind(logEast, logCentral)
+logDEN = log %>% filter (grepl(Mountain, log$START.TIME.LOCAL))
+logDEN$time.zone = "MDT"
+logLA = log %>% filter (grepl(Pacific, log$START.TIME.LOCAL))
+logLA$time.zone = "PDT"
+
+#Adding general location & combining tables
+logRT$general.location = "Road Trip"
+logDEN$general.location = "Denver"
+logLA$general.location = "Los Angeles"
+time.log = rbind (logRT, logDEN, logLA)
+time.log = time.log %>% rename(activity = "NAME")
+time.log = time.log %>% rename(time.seconds = "DURATION")
+time.log = time.log %>% rename(time.minutes = "MINUTES")
+```
+
+Describe your question(s) here.  Briefly describe your data collection process, including how you defined variables of interest.
+
+My questions are all regarding the differences in my behavior and how I have spent my time differently throughout my travels which I have categorized into three different sections of time (Road Trip, Denver, Los Angeles). Using an app that tracks changes in location, I am trying to notice patterns or blatant differences in lifestyle.
+
+Describe what information is conveyed through data visualization #1 (that you'll create below) here.
+
+```{r}
+library(ggplot2)
+print("This visualization showcases my average time spent on activities in each location. While this isn't the best comparison of what I spent my time doing in each location, it shows a change in lifestyle as I spent more time at certain places.")
+
+#Calculating average time spent per activity for each location.
+print("Road trip:")
+RT.time = tapply(logRT$MINUTES, logRT$NAME, mean)
+RT.time
+print("Denver:")
+DEN.time = tapply(logDEN$MINUTES, logDEN$NAME, mean)
+DEN.time
+print("Los Angeles:")
+LA.time = tapply(logLA$MINUTES, logLA$NAME, mean)
+LA.time
+
+#Changing from array to data frame, adding location.
+RT.time = as.data.frame.table(RT.time, col.names=pop)
+RT.time$Location = "Road Trip"
+
+DEN.time = as.data.frame.table(DEN.time, col.names=pop)
+DEN.time$Location = "Denver"
+
+LA.time = as.data.frame.table(LA.time, col.names=pop)
+LA.time$Location = "Los Angeles"
+
+#Combining 3 separate data frames into one
+time.table = rbind(RT.time, DEN.time, LA.time)
+names(time.table) = c("Activity", "Average.Time.Spent", "Location")
+time.table
+
+#Creating bar graph, average time spent per activity
+plot = ggplot(time.table, aes(fill=Location, x=Activity, y=Average.Time.Spent)) + geom_bar(stat="identity", position="dodge") + 
+  labs(x="Activity", y="Average Time Spent (Minutes)", title = "Graph 1.1 - Average time spent per activity (minutes)")
+plot
+print("This graph shows how much time I spent, on average, for each activity listed throughout the different areas of my travels.")
+```
+
+Describe what information is conveyed through data visualization #2 (that you'll create below) here.
+
+```{r}
+library(ggplot2)
+
+#Counting times each activity was documented by location
+RT.tally = tally(group_by(logRT, NAME))
+RT.tally$area = "Road Trip"
+DEN.tally = tally(group_by(logDEN, NAME))
+DEN.tally$area = "Denver"
+LA.tally = tally(group_by(logLA, NAME))
+LA.tally$area = "Los Angeles"
+
+#Combining all 3 tables
+tally = rbind(RT.tally, DEN.tally, LA.tally)
+
+#Creating and printing graph
+tally = ggplot(tally, aes(fill=area, x=NAME, y=n)) + geom_bar(stat="identity", position="dodge") + 
+  labs(x="Activity", y="Frequency of Activity", title = "Graph 2.1 - Times each  activity was documented by location")
+tally
+print("This graph shows how many times I did each activity listed throughout the different areas of my travels.")
+```
+
+Describe what information is conveyed through the table (that you'll create below) here.
+
+```{r, results='asis'}
+#Selecting most important columns from larger data table
+present = subset(log, select = -c(3:5, 8, 10))
+present
+print("This table shows each instance of my location chaning enough that the app noticed it, and documented it as a different activity.")
+```
+
+To conclude, briefly summarize what you found in response to the questions posed here.
+
+I found that my activities differed by location in ways I didn't expect. For example that I drove more times in Denver than anywhere else. Most of the other distinct differences, however, were expected. Such as that I've slept the most in Los Angeles, where I actually had a bed to sleep in.
+
+\newpage
+# Reflection
+
+Write your one-page reflection here in paragraph form.  In particular, address:
+
+- What difficulties in the data collection and analysis process did you encounter?  Identify two of your main hurdles in gathering accurate data.
+\newline
+\newline
+\indent One problem I had to handle during my data collection and analysis process was that the app from which I drew my data only collected data as I changed location, as a result I had to add in data when I didn't change location but changed activity. This created issues as it is more difficult to recall specific times when I changed what I was doing. I also found that this app gave me way too much data, including the exact seconds when I started and stopped activities and had data dating back to the summer of 2017. 
+  
+- What implications does that have for future data collection and/or analysis projects? 
+\newline
+\newline
+\indent The implications I've drawn from this project are essentially just that I should update my data more frequently and rely less on apps. I also wish I had used a service which was only intended for this project, as using an app which I’ve used since 2017 resulted in an abundance of data and titles of activities such as “Chillin” which makes sense to me but in academia is a rather inappropriate title. 
+
+- How much data do you think you'd need to collect in order to answer your question(s) of interest? Would it be hard to collect that data? Why or why not?
+\newline
+\newline
+\indent I think the data I collected was sufficient to answer my questions of interest, however it would have been nice and more informative to have been able to include more data. One set of data I had hoped to use at one point was my heart rate as measured by my watch. I discovered, however, that the readings were not consistent enough to look at alongside the day-to-day data I had analyzed. 
+
+- As someone who provides data, what expectations do you have when you give your data (e.g. to Facebook, Google, MapMyRun, etc.)? 
+\newline
+\newline
+\indent Well I would expect that these large corporates attempt to keep my data private, but I think we all know that this is not the case. I think at the very least, these large corporations could be more transparent and cooperative about what data they share. There are some facets of my data that I don’t mind being public, especially if I get my internet experienced tailored more towards my taste as a result, however I don’t enjoy when google maps knows when and where my flights are and where I will be staying and the duration of my stays.
+
+- As someone who analyzes others' data, what ethical responsibilities do you have?
+\newline
+\newline
+\indent While analyzing the data of others, I would have the ethical responsibilities to analyze the data from an impartial view and, I believe, to use the data in an effort to better somebody’s awareness of their own data. An important responsibility is to keep the data confidential and to communicate with the other party about your findings and any potential concerns regarding the data.
