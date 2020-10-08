@@ -1751,31 +1751,78 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIzMzMSwgXG5saWJyYXJ5KHRpZHljZW5zdXMpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmNlbnN1c19hcGlfa2V5KFwiMGQzZDQ3ZDIzYmIxNTI2N2E4YjUxYjRlMjE5N2MxZWEzZDdhNzJlNFwiKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIzMzMSwgXG5saWJyYXJ5KHRpZHljZW5zdXMpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcblxuc3RhdGUgPC0gZ2V0X2FjcyhnZW9ncmFwaHkgPSBcIm1ldHJvcG9saXRhbiBzdGF0aXN0aWNhbCBhcmVhL21pY3JvcG9saXRhbiBzdGF0aXN0aWNhbCBhcmVhXCIsXG4gICAgICAgICAgICAgIHZhcmlhYmxlcyA9IGMocG9wdWxhdGlvbiA9IFwiQjAxMDAzXzAwMVwiLCBwb3ZlcnR5ID0gXCJCMTAwNTlfMDAyXCIsIGluc3VyZWQgPSBcIkIyNzAwMV8wMDFcIiwgaGlnaC5zY2hvb2wgPSBcIkIxNTAwM18wMTdcIiwgYmFjaGVsb3JzID0gXCJCMTUwMDNfMDIyXCIsIG1hc3RlcnMgPSBcIkIxNTAwM18wMjNcIiksXG4gICAgICAgICAgICAgIHllYXIgPSAyMDE4LCBvdXRwdXQgPSBcIndpZGVcIilcbmBgYCJ9 -->
 <pre class="r"><code>#331, 
 library(tidycensus)
 library(tidyverse)
-census_api_key(&quot;0d3d47d23bb15267a8b51b4e2197c1ea3d7a72e4&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVG8gaW5zdGFsbCB5b3VyIEFQSSBrZXkgZm9yIHVzZSBpbiBmdXR1cmUgc2Vzc2lvbnMsIHJ1biB0aGlzIGZ1bmN0aW9uIHdpdGggYGluc3RhbGwgPSBUUlVFYC5cbiJ9 -->
-<pre><code>To install your API key for use in future sessions, run this function with `install = TRUE`.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RhdGUgPC0gZ2V0X2FjcyhnZW9ncmFwaHkgPSBcIm1ldHJvcG9saXRhbiBzdGF0aXN0aWNhbCBhcmVhL21pY3JvcG9saXRhbiBzdGF0aXN0aWNhbCBhcmVhXCIsXG4gICAgICAgICAgICAgIHZhcmlhYmxlcyA9IGMocG9wdWxhdGlvbiA9IFwiQjAyMDAxXzAwMVwiKSxcbiAgICAgICAgICAgICAgeWVhciA9IDIwMTgpXG5gYGAifQ== -->
-<pre class="r"><code>state &lt;- get_acs(geography = &quot;metropolitan statistical area/micropolitan statistical area&quot;,
-              variables = c(population = &quot;B02001_001&quot;),
-              year = 2018)</code></pre>
+
+state &lt;- get_acs(geography = &quot;metropolitan statistical area/micropolitan statistical area&quot;,
+              variables = c(population = &quot;B01003_001&quot;, poverty = &quot;B10059_002&quot;, insured = &quot;B27001_001&quot;, high.school = &quot;B15003_017&quot;, bachelors = &quot;B15003_022&quot;, masters = &quot;B15003_023&quot;),
+              year = 2018, output = &quot;wide&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiR2V0dGluZyBkYXRhIGZyb20gdGhlIDIwMTQtMjAxOCA1LXllYXIgQUNTXG4ifQ== -->
 <pre><code>Getting data from the 2014-2018 5-year ACS</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2l0aWVzIDwtIHN0YXRlICU+JSAgYXJyYW5nZShkZXNjKGVzdGltYXRlKSklPiUgIGhlYWQoMzApXG5gYGAifQ== -->
-<pre class="r"><code>cities &lt;- state %&gt;%  arrange(desc(estimate))%&gt;%  head(30)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2l0eV9kYXRhIDwtIHN0YXRlICU+JSAgYXJyYW5nZShkZXNjKHBvcHVsYXRpb25FKSlcbmZpbmFsID0gaGVhZChjaXR5X2RhdGFbMDo5OSwgYygwLDIsMyw1LDcsIDksIDExLCAxMyldLCAxMDApXG5maW5hbCRwb3ZlcnR5ID0gZmluYWxbM10vZmluYWxbMl1cbmZpbmFsJGluc3VyZWQgPSBmaW5hbFs1XS9maW5hbFsyXVxuZmluYWwkaGlnaC5zY2hvb2wgPSBmaW5hbFs3XS9maW5hbFsyXVxuZmluYWwkYmFjaGVsb3JzID0gZmluYWxbOV0vZmluYWxbMl1cbmZpbmFsJG1hc3RlcnMgPSBmaW5hbFsxMV0vZmluYWxbMl1cbmNpdGllcyA9IChjaXR5X2RhdGFbMDo5OSwyXSlcblxuY2hlY2sgPC0gbG9hZF92YXJpYWJsZXMoMjAxOCwgXCJhY3M1XCIsIGNhY2hlID0gVFJVRSlcblxuI0IxNDAwNl8wMDEgLSBiZWxvdyBwb3ZlcnR5IGxpbmVcbiNCMTEwMTFfMDAxIC0gaG91c2hvbGQgYnkgdW5pdHMgaW4gc3RydWN0dXJlXG4jXHRCMTI1MDNfMDAxIC0gZGl2b3JjZXMgaW4gbGFzdCB5ZWFyXG4jIEIxMjUwNV8wMDEgLSBudW1iZXIgb2YgdGltZXMgbWFycmllZFxuXG4jIEIxNTAwM18wMDEgLSBlZHVjYXRpb25hbCBhdHRhaW5tZW50XG4jIFxuIyBCMTUwMDNfMDE2XG4jIEVzdGltYXRlISFUb3RhbCEhMTJ0aCBncmFkZSwgbm8gZGlwbG9tYVxuIyBCMTUwMDNfMDE3XG4jIEVzdGltYXRlISFUb3RhbCEhUmVndWxhciBoaWdoIHNjaG9vbCBkaXBsb21hXG4jIEVEVUNBVElPTkFMIEFUVEFJTk1FTlQgRk9SIFRIRSBQT1BVTEFUSU9OIDI1IFlFQVJTIEFORCBPVkVSXG4jIDgxMzBcbiMgQjE1MDAzXzAxOFxuIyBFc3RpbWF0ZSEhVG90YWwhIUdFRCBvciBhbHRlcm5hdGl2ZSBjcmVkZW50aWFsXG4jIEVEVUNBVElPTkFMIEFUVEFJTk1FTlQgRk9SIFRIRSBQT1BVTEFUSU9OIDI1IFlFQVJTIEFORCBPVkVSXG4jIDgxMzFcbiMgQjE1MDAzXzAxOVxuIyBFc3RpbWF0ZSEhVG90YWwhIVNvbWUgY29sbGVnZSwgbGVzcyB0aGFuIDEgeWVhclxuIyBFRFVDQVRJT05BTCBBVFRBSU5NRU5UIEZPUiBUSEUgUE9QVUxBVElPTiAyNSBZRUFSUyBBTkQgT1ZFUlxuIyA4MTMyXG4jIEIxNTAwM18wMjBcbiMgRXN0aW1hdGUhIVRvdGFsISFTb21lIGNvbGxlZ2UsIDEgb3IgbW9yZSB5ZWFycywgbm8gZGVncmVlXG4jIEVEVUNBVElPTkFMIEFUVEFJTk1FTlQgRk9SIFRIRSBQT1BVTEFUSU9OIDI1IFlFQVJTIEFORCBPVkVSXG4jIDgxMzNcbiMgQjE1MDAzXzAyMVxuIyBFc3RpbWF0ZSEhVG90YWwhIUFzc29jaWF0ZSdzIGRlZ3JlZVxuIyBFRFVDQVRJT05BTCBBVFRBSU5NRU5UIEZPUiBUSEUgUE9QVUxBVElPTiAyNSBZRUFSUyBBTkQgT1ZFUlxuIyA4MTM0XG4jIEIxNTAwM18wMjJcbiMgRXN0aW1hdGUhIVRvdGFsISFCYWNoZWxvcidzIGRlZ3JlZVxuIyBFRFVDQVRJT05BTCBBVFRBSU5NRU5UIEZPUiBUSEUgUE9QVUxBVElPTiAyNSBZRUFSUyBBTkQgT1ZFUlxuIyA4MTM1XG4jIEIxNTAwM18wMjNcbiMgRXN0aW1hdGUhIVRvdGFsISFNYXN0ZXIncyBkZWdyZWVcbiMgRURVQ0FUSU9OQUwgQVRUQUlOTUVOVCBGT1IgVEhFIFBPUFVMQVRJT04gMjUgWUVBUlMgQU5EIE9WRVJcbiMgODEzNlxuIyBCMTUwMDNfMDI0XG4jIEVzdGltYXRlISFUb3RhbCEhUHJvZmVzc2lvbmFsIHNjaG9vbCBkZWdyZWVcbiMgRURVQ0FUSU9OQUwgQVRUQUlOTUVOVCBGT1IgVEhFIFBPUFVMQVRJT04gMjUgWUVBUlMgQU5EIE9WRVJcbiMgODEzN1xuIyBCMTUwMDNfMDI1XG5gYGAifQ== -->
+<pre class="r"><code>city_data &lt;- state %&gt;%  arrange(desc(populationE))
+final = head(city_data[0:99, c(0,2,3,5,7, 9, 11, 13)], 100)
+final$poverty = final[3]/final[2]
+final$insured = final[5]/final[2]
+final$high.school = final[7]/final[2]
+final$bachelors = final[9]/final[2]
+final$masters = final[11]/final[2]
+cities = (city_data[0:99,2])
+
+check &lt;- load_variables(2018, &quot;acs5&quot;, cache = TRUE)
+
+#B14006_001 - below poverty line
+#B11011_001 - houshold by units in structure
+#   B12503_001 - divorces in last year
+# B12505_001 - number of times married
+
+# B15003_001 - educational attainment
+# 
+# B15003_016
+# Estimate!!Total!!12th grade, no diploma
+# B15003_017
+# Estimate!!Total!!Regular high school diploma
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8130
+# B15003_018
+# Estimate!!Total!!GED or alternative credential
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8131
+# B15003_019
+# Estimate!!Total!!Some college, less than 1 year
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8132
+# B15003_020
+# Estimate!!Total!!Some college, 1 or more years, no degree
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8133
+# B15003_021
+# Estimate!!Total!!Associate&#39;s degree
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8134
+# B15003_022
+# Estimate!!Total!!Bachelor&#39;s degree
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8135
+# B15003_023
+# Estimate!!Total!!Master&#39;s degree
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8136
+# B15003_024
+# Estimate!!Total!!Professional school degree
+# EDUCATIONAL ATTAINMENT FOR THE POPULATION 25 YEARS AND OVER
+# 8137
+# B15003_025</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3IsIGluc3RhbGwgPSBUUlVFfQojMzMxLCAKbGlicmFyeSh0aWR5Y2Vuc3VzKQpsaWJyYXJ5KHRpZHl2ZXJzZSkKY2Vuc3VzX2FwaV9rZXkoIjBkM2Q0N2QyM2JiMTUyNjdhOGI1MWI0ZTIxOTdjMWVhM2Q3YTcyZTQiKQoKc3RhdGUgPC0gZ2V0X2FjcyhnZW9ncmFwaHkgPSAibWV0cm9wb2xpdGFuIHN0YXRpc3RpY2FsIGFyZWEvbWljcm9wb2xpdGFuIHN0YXRpc3RpY2FsIGFyZWEiLAogICAgICAgICAgICAgIHZhcmlhYmxlcyA9IGMocG9wdWxhdGlvbiA9ICJCMDEwMDNfMDAxIiksCiAgICAgICAgICAgICAgeWVhciA9IDIwMTgpCgpjaXRpZXMgPC0gc3RhdGUgJT4lICBhcnJhbmdlKGRlc2MoZXN0aW1hdGUpKSU+JSAgaGVhZCgzMCkKYGBgCgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CiMzMzEsIApsaWJyYXJ5KHRpZHljZW5zdXMpCmxpYnJhcnkodGlkeXZlcnNlKQoKc3RhdGUgPC0gZ2V0X2FjcyhnZW9ncmFwaHkgPSAibWV0cm9wb2xpdGFuIHN0YXRpc3RpY2FsIGFyZWEvbWljcm9wb2xpdGFuIHN0YXRpc3RpY2FsIGFyZWEiLAogICAgICAgICAgICAgIHZhcmlhYmxlcyA9IGMocG9wdWxhdGlvbiA9ICJCMDEwMDNfMDAxIiwgcG92ZXJ0eSA9ICJCMTAwNTlfMDAyIiwgaW5zdXJlZCA9ICJCMjcwMDFfMDAxIiwgaGlnaC5zY2hvb2wgPSAiQjE1MDAzXzAxNyIsIGJhY2hlbG9ycyA9ICJCMTUwMDNfMDIyIiwgbWFzdGVycyA9ICJCMTUwMDNfMDIzIiksCiAgICAgICAgICAgICAgeWVhciA9IDIwMTgsIG91dHB1dCA9ICJ3aWRlIikKCmNpdHlfZGF0YSA8LSBzdGF0ZSAlPiUgIGFycmFuZ2UoZGVzYyhwb3B1bGF0aW9uRSkpCmZpbmFsID0gaGVhZChjaXR5X2RhdGFbMDo5OSwgYygwLDIsMyw1LDcsIDksIDExLCAxMyldLCAxMDApCmZpbmFsJHBvdmVydHkgPSBmaW5hbFszXS9maW5hbFsyXQpmaW5hbCRpbnN1cmVkID0gZmluYWxbNV0vZmluYWxbMl0KZmluYWwkaGlnaC5zY2hvb2wgPSBmaW5hbFs3XS9maW5hbFsyXQpmaW5hbCRiYWNoZWxvcnMgPSBmaW5hbFs5XS9maW5hbFsyXQpmaW5hbCRtYXN0ZXJzID0gZmluYWxbMTFdL2ZpbmFsWzJdCmNpdGllcyA9IChjaXR5X2RhdGFbMDo5OSwyXSkKCmNoZWNrIDwtIGxvYWRfdmFyaWFibGVzKDIwMTgsICJhY3M1IiwgY2FjaGUgPSBUUlVFKQoKYGBgCgoKCgo=</div>
 
 
 
