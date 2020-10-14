@@ -52,10 +52,9 @@ My questions are all regarding the differences in my behavior and how I have spe
 
 Describe what information is conveyed through data visualization #1 (that you'll create below) here.
 
-```{r}
-library(ggplot2)
-print("This visualization showcases my average time spent on activities in each location. While this isn't the best comparison of what I spent my time doing in each location, it shows a change in lifestyle as I spent more time at certain places.")
+This visualization showcases my average time spent on activities in each location. While this isn't the best comparison of what I spent my time doing in each location, it shows a change in lifestyle as I spent more time at certain places.
 
+```{r}
 #Calculating average time spent per activity for each location.
 print("Road trip:")
 RT.time = tapply(logRT$MINUTES, logRT$NAME, mean)
@@ -83,11 +82,15 @@ names(time.table) = c("Activity", "Average.Time.Spent", "Location")
 time.table
 
 #Creating bar graph, average time spent per activity
-plot = ggplot(time.table, aes(fill=Location, x=Activity, y=Average.Time.Spent)) + geom_bar(stat="identity", position="dodge") + 
-  labs(x="Activity", y="Average Time Spent (Minutes)", title = "Graph 1.1 - Average time spent per activity (minutes)")
+library(ggplot2)
+plot = ggplot(time.table, aes(fill=Location, x=Activity, y=Average.Time.Spent))+ 
+  geom_bar(stat="identity", position="dodge") + 
+  labs(x="Activity", y="Average Time Spent (Minutes)", title = 
+         "Graph 1.1 - Average time spent per activity (minutes)")
 plot
-print("This graph shows how much time I spent, on average, for each activity listed throughout the different areas of my travels.")
+
 ```
+This graph shows how much time I spent, on average, for each activity listed throughout the different areas of my travels.
 
 Describe what information is conveyed through data visualization #2 (that you'll create below) here.
 
@@ -106,11 +109,13 @@ LA.tally$area = "Los Angeles"
 tally = rbind(RT.tally, DEN.tally, LA.tally)
 
 #Creating and printing graph
-tally = ggplot(tally, aes(fill=area, x=NAME, y=n)) + geom_bar(stat="identity", position="dodge") + 
-  labs(x="Activity", y="Frequency of Activity", title = "Graph 2.1 - Times each  activity was documented by location")
+tally = ggplot(tally, aes(fill=area, x=NAME, y=n)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  labs(x="Activity", y="Frequency of Activity", 
+       title = "Graph 2.1 - Times each  activity was documented by location")
 tally
-print("This graph shows how many times I did each activity listed throughout the different areas of my travels.")
 ```
+This graph shows how many times I did each activity listed throughout the different areas of my travels.
 
 Describe what information is conveyed through the table (that you'll create below) here.
 
@@ -118,8 +123,11 @@ Describe what information is conveyed through the table (that you'll create belo
 #Selecting most important columns from larger data table
 present = subset(log, select = -c(3:5, 8, 10))
 present
-print("This table shows each instance of my location chaning enough that the app noticed it, and documented it as a different activity.")
 ```
+
+This table shows each instance of my location chaning enough that the app noticed it, and documented it as a different activity
+
+
 
 To conclude, briefly summarize what you found in response to the questions posed here.
 

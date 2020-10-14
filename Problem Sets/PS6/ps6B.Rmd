@@ -1,7 +1,7 @@
 ---
 title: "STAT 231: Problem Set 6B"
 author: "Mike Santos"
-date: "due by 5 PM on Friday, October 9"
+date: "due by 2 PM on Friday, October 9"
 output:
   pdf_document: default
   html_document:
@@ -73,16 +73,21 @@ tweets = trump_tweets_df[0:1512, c(1,5,10)]
 \newpage
 1b. Using the `statusSource` variable, compute the number of tweets from each source.  How many different sources are there?  How often are each used?
 
-> ANSWER:  
+> ANSWER: There are 4 sources: Android, iPad, iPhone, and Computer. There are 762 tweets from Android, 628 from iPhone, 120 from a computer, and 1 from an iPad.
 
 ```{r}
-
+source = tweets
+source$device = "Computer"
+source = tweets %>% extract(col = statusSource, into = "device"
+          , regex = "Twitter (.*)<"
+          , remove = FALSE)
+source %>% group_by(device) %>% tally()
 ```
 
 \newpage
 1c. We're going to compare the language used between the Android and iPhone sources, so only want to keep tweets coming from those sources.  Explain what the `extract` function (from the `tidyverse` package) is doing below.  (Note that "regex" stands for "regular expression".)
 
-> ANSWER: 
+> ANSWER: The extract function is reading the text after the source says "Twitter for .." and reads in the device from which the tweet was written.
 
 ```{r}
 tweets2 <- tweets %>%
@@ -90,6 +95,12 @@ tweets2 <- tweets %>%
           , regex = "Twitter for (.*)<"
           , remove = FALSE) %>%
   filter(source %in% c("Android", "iPhone"))
+
+android = tweets2  %>%
+  filter(source %in% "Android")
+
+iphone = tweets2  %>%
+  filter(source %in% "iPhone")
 ```
 
 
@@ -100,11 +111,52 @@ tweets2 <- tweets %>%
 
 Don't forget to remove stop words before creating the word cloud.  Also remove the terms "https" and "t.co".
 
-> ANSWER:  
+> ANSWER:  The most common phrase between both word clouds seems to be "hillary", which is certainly not what I expected. The iPhone word cloud seems to be more positive, including words such as "love", "safe", and "enjoy". The iPhone word cloud is a lot more dominated by two commonly used phrases, whereas the Android one has more less commonly used words.
 
 ```{r, fig.width=8, fig.height=8}
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+library(tidyverse)
 
+#cleaning android words
+android_words <- android %>%
+  unnest_tokens(output = word, input = text)
 
+https = list(word = "https", lexicon = "extra")
+tco = list(word = "t.co", lexicon = "extra")
+
+data(stop_words)
+stop_words = stop_words %>% rbind(tco)%>% rbind(https)
+stop_words %>% count(lexicon)
+android_clean <- android_words %>%
+  anti_join(stop_words, by="word")
+
+android_frequencies <- android %>%
+  unnest_tokens(output = word, input = text) %>%
+  anti_join(stop_words, by="word") %>%
+  count(word, sort = TRUE) 
+
+#android word cloud
+android_frequencies %>%
+  with(wordcloud(words = word, freq = n, max.words=50, scale=c(7,1)))
+
+#cleaning iphone words
+iphone_words <- iphone %>%
+  unnest_tokens(output = word, input = text)
+
+iphone_clean <- iphone_words %>%
+  anti_join(stop_words, by="word")
+
+iphone_frequencies <- iphone %>%
+  unnest_tokens(output = word, input = text) %>%
+  anti_join(stop_words, by="word") %>%
+  count(word, sort = TRUE) 
+
+#creating iphone word cloud
+iphone_frequencies %>%
+  with(wordcloud(words = word, freq = n, max.words=50, scale=c(7,1)))
 ```
 
 \newpage
@@ -112,26 +164,56 @@ Don't forget to remove stop words before creating the word cloud.  Also remove t
 
 How do the top used bigrams compare between the two sources?
 
-> ANSWER:  
+> ANSWER:  The bigrams differ similarly to the word clouds, where the android display features words which are mentioned similar amounts of times, and the iphone display is dominated by a few words.
 
 ```{r}
+iphone_ten = head(iphone_frequencies, 10) 
+android_ten = head(android_frequencies, 10)
 
+library(ggplot2)
+iphone <-ggplot(data=iphone_ten, aes(x=word, y=n)) + geom_bar(color = "yellow", fill = "red", stat="identity") +
+theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=45, hjust=1)) 
+iphone
+
+android <-ggplot(data=android_ten, aes(x=word, y=n)) +
+geom_bar(color = "blue", fill = "red", stat="identity")+
+theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=45, hjust=1)) 
+android
 ```
 
 
 \newpage
 2c. Consider the sentiment.  Compute the proportion of words among the tweets within each source classified as "angry" and the proportion of words classified as "joy"  based on the NRC lexicon.  How does the proportion of "angry" and "joy" words compare between the two sources?  What about "positive" and "negative" words?  
 
-> ANSWER: 
+> ANSWER: Both devices have a roughly 1:1 positive to negative tweet ratio, and both have a roughly 2:1 positive to angry tweet ratio. It seems as if the proportions of angry to joy words are fairly similar. Proportionally the devices seem to tweet the same ratio of sentiments.
 
 ```{r}
+nrc_lexicon <- get_sentiments("nrc")
 
+#adding nrc lexicon to android words
+android_missed_words <- android_frequencies %>%
+  anti_join(nrc_lexicon, by="word")
 
+android_freq2 = android_frequencies %>% anti_join(android_missed_words, by="word")
+android_freq2 = merge(android_freq2, nrc_lexicon, by="word")
+android_count = android_freq2 %>% count(sentiment)
+head(android_count, 10)
+
+#adding nrc lexicon to iphone words
+iphone_missed_words <- iphone_frequencies %>%
+  anti_join(nrc_lexicon, by="word")
+
+iphone_freq2 = iphone_frequencies %>% anti_join(iphone_missed_words, by="word")
+iphone_freq2 = merge(iphone_freq2, nrc_lexicon, by="word")
+iphone_count = iphone_freq2 %>% count(sentiment)
+head(iphone_count, 10)
 ```
 
 
 \newpage
 2d. Lastly, based on your responses above, do you think there is evidence to support Robinson's claim that Trump only writes the (angrier) Android half of the tweets from realDonaldTrump?  In 2-4 sentences, please explain.
 
-> ANSWER: 
+> ANSWER: I would not say that there is enough evidence to support this claim. While at a glance, there are more negative tweets from the android half, there are not proportionally many more negative tweets. Both devices have a roughly 1:1 positive to negative tweet ratio, and both have a roughly 2:1 positive to angry tweet ratio. Proportionally the devices seem to tweet the same ratio of sentiments. 
 

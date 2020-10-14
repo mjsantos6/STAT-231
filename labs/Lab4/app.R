@@ -79,7 +79,7 @@ server <- function(input,output){
   
   output$scatter <- renderPlot({
     ggplot(data = use_data(), aes_string(x = input$x, y = input$y)) +
-      geom_point() +
+      geom_boxplot() +
       labs(x = names(x_choices)[x_choices == input$x]
            , y = y_choice_names[y_choice_values == input$y]) +
       geom_label(data = filter(nfl_suspensions, name == input$name)
