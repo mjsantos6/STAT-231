@@ -1,0 +1,175 @@
+---
+title: "STAT 231: Problem Set 7B"
+author: "Mike Santos"
+date: "due by 5 PM on Friday, October 30"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+This homework assignment is designed to help you futher ingest, practice, and expand upon the material covered in class over the past week(s).  You are encouraged to work with other students, but all code and text must be written by you, and you must indicate below who you discussed the assignment with (if anyone).  
+
+Steps to proceed:
+
+\begin{enumerate}
+\item In RStudio, go to File > Open Project, navigate to the folder with the course-content repo, select the course-content project (course-content.Rproj), and click "Open" 
+\item Pull the course-content repo (e.g. using the blue-ish down arrow in the Git tab in upper right window)
+\item Copy ps7B.Rmd from the course repo to your repo (see page 6 of the GitHub Classroom Guide for Stat231 if needed)
+\item Close the course-content repo project in RStudio
+\item Open YOUR repo project in RStudio
+\item In the ps7B.Rmd file in YOUR repo, replace "YOUR NAME HERE" with your name
+\item Add in your responses, committing and pushing to YOUR repo in appropriate places along the way
+\item Run "Knit PDF" 
+\item Upload the pdf to Gradescope.  Don't forget to select which of your pages are associated with each problem.  \textit{You will not get credit for work on unassigned pages (e.g., if you only selected the first page but your solution spans two pages, you would lose points for any part on the second page that the grader can't see).} 
+\end{enumerate}
+
+```{r, setup, include=FALSE}
+library(tidyverse)
+library(ggnetwork)
+library(igraph)
+
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+
+\newpage 
+# If you discussed this assignment with any of your peers, please list who here:
+
+> ANSWER:
+
+\newpage
+# 1. More Migration
+
+1a. Consider migration between the following countries: Brazil, Ghana, Great Britain, Honduras, India, South Korea, United States, and Vietnam.  Compare the TOTAL (males + females) migration between these countries over time.  In separate (directed) graphs for 1980 and 2000, visualize the network for the these countries with edge width and/or edge color corresponding to migration flow size.  Interpret the two graphs -- what *information in context* do they convey?
+
+> ANSWER: The data indicates that there was a significant decrease in migration between these countries from the 1980s to the 2000, the countries had especially been migrating to the USA during the 80's.
+
+
+```{r, message = FALSE}
+library(dplyr)
+library(igraph) 
+library(network)
+MigrationFlows <- read_csv("MigrationFlows.csv")
+
+countries <- c("BRA","GBR","GHA","HND","IND","KOR", "USA", "VNM")
+
+# need migration overall: 
+# do some prelim data wrangling to combine numbers for males + females
+MigrationFlows= select(MigrationFlows, c(-sex))
+Migration_Base = MigrationFlows %>% select(origincode, destcode, Y2000, Y1990, Y1980)
+Migration = Migration_Base %>% filter(destcode %in% countries & origincode %in% countries)
+migration = graph_from_data_frame(Migration, directed = TRUE)
+
+# vertices
+V(migration)
+V(migration)$Y2000
+V(migration)$Y1980
+vcount(migration)
+
+# edges
+E(migration)
+E(migration)$destcode
+E(migration)$origincode
+ecount(migration)
+
+migration_network <- ggnetwork(migration)
+head(migration_network)
+
+
+ggplot(data = migration_network
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "gray50"
+            , aes(size = Y2000)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank()
+
+ggplot(data = migration_network
+       , aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_edges(arrow=arrow(type="closed", length=unit(6,"pt"))
+            , color = "gray50"
+            , aes(size = Y1980)) +
+  geom_nodes() +
+  geom_nodelabel(aes(label = name)) +
+  theme_blank()
+
+```
+
+1b. Compute the *unweighted* in-degree for Brazil in this network from 2000, and the *weighted* in-degree for Brazil in this network from 2000.  In 1-2 sentences, interpret these numbers in context (i.e., without using the terms "in-degree" or "weighted").
+
+> ANSWER:  Brazil appears to have received immigrants from each of the seven countries and had an indegree of 16. After taking into account the distances from each other country, the value increases to 20,885. 
+
+```{r}
+igraph::degree(migration, mode = "in")
+strength(migration, weights = E(migration)$Y2000, mode = "in")
+```
+
+
+1c. Among these same countries, idenitify the top 5 countries *of origin* and *of destination* (separately) in 1980 using (weighted) degree centrality.  Interpret this information.
+
+> ANSWER: For the 1980 data, it appears as if the top five of origin are: Great Britain, India, South Korea, Vietnam, and the United States. Conversely, the top five of destination appear to be: the United States, Great Britain, Brazil, India, and South Korea. The top five countries of origin are the top countries from which people emigrate from and the top five countries of destination are the top countries to which people immigrate.
+
+```{r}
+mig <- graph_from_data_frame(Migration)
+strength(mig, weights = E(mig)$Y1980)
+strength(mig, weights = E(mig)$Y1980, mode = "in")
+strength(mig, weights = E(mig)$Y1980, mode = "out")
+```
+
+
+1d. Among these same countries, idenitify the top 5 countries *of origin* and *of destination* (separately) in 2000 using (weighted) degree centrality.  Interpret this information.
+
+> ANSWER: For the 2000 data, it appears as if the top five of origin are: Great Britain, India, the United States, South Korea, and Brazil. Conversely, the top five of destination appear to be: the United States, Great Britain, Brazil, India, and Ghana. The top five countries of origin are the top countries from which people emigrate from and the top five countries of destination are the top countries to which people immigrate.
+
+```{r}
+strength(mig, weights = E(mig)$Y2000)
+strength(mig, weights = E(mig)$Y2000, mode = "in")
+strength(mig, weights = E(mig)$Y2000, mode = "out")
+```
+
+
+1e. What is the diameter of this network in 2000? In 1-2 sentences, interpret this value.
+
+> ANSWER:  The diameter of the network is 527. Thus the two farthest nations are 527 components from each other.
+
+```{r}
+diameter(mig, weights = E(mig)$Y2000)
+```
+
+
+1f. What is the density of this network in 2000? In 1-2 sentences, interpret this value.
+
+> ANSWER: The density of this network is 0.2857. This means that 28.6% of the connections that could exist, do exist.
+
+```{r}
+V(mig)
+amount = vcount(mig)
+possible = vcount(mig)*(vcount(mig)-1)/2
+amount/possible
+```
+
+
+\newpage
+# 2. Love Actually (OPTIONAL PRACTICE)
+
+This problem is *optional* and will not be graded, but is given to provide additional practice interpreting networks and as another real-world example of network analysis that might be intriguing to film buffs. 
+
+Consider the figure "The Two Londons of 'Love Actually'" in [this FiveThirtyEight article](https://fivethirtyeight.com/features/the-definitive-analysis-of-love-actually-the-greatest-christmas-movie-of-our-time/). 
+
+2a. Based on this figure, is the network connected?  In 1-2 sentences, please explain.
+
+> ANSWER: 
+
+2b. Based on the figure, what is the (unweighted) degree for Emma Thompson?  What is the (unweighted) degree for Keira Knightley?  Explain what these values mean for these characters.
+
+> ANSWER: 
+
+2c. Based on the figure, for whom would the (unweighted) betweenness centrality measure be higher: Colin Firth or Hugh Grant?  Explain what this implies. 
+
+> ANSWER:  
+
+ 
